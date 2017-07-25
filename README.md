@@ -29,8 +29,11 @@ index.html:
 views/js/main.js:
 - use getElementByClass instead of querySelectorAll
 - mover pizzas saved in "var items"
+- used  document.getElementById() instead of querySelector to make  Web API call faster
 - Used requestAnimationFrame to call updatePositions on scroll
 - Reduced number of pizzas being created to 40
+- declare the pizzasDiv variable outside the loop, so only DOM call is made one.
+
 
 Resources
 
