@@ -1,16 +1,12 @@
 /*
 Welcome to the 60fps project! Your goal is to make Cam's Pizzeria website run
 jank-free at 60 frames per second.
-
 There are two major issues in this code that lead to sub-60fps performance. Can
 you spot and fix both?
-
-
 Built into the code, you'll find a few instances of the User Timing API
 (window.performance), which will be console.log()ing frame rate data into the
 browser console. To learn more about User Timing API, check out:
 http://www.html5rocks.com/en/tutorials/webperformance/usertiming/
-
 Creator:
 Cameron Pittman, Udacity Course Developer
 cameron *at* udacity *dot* com
@@ -18,6 +14,8 @@ cameron *at* udacity *dot* com
 
 // As you may have realized, this website randomly generates pizzas.
 // Here are arrays of all possible pizza ingredients.
+
+
 var pizzaIngredients = {};
 pizzaIngredients.meats = [
   "Pepperoni",
@@ -383,7 +381,6 @@ var pizzaElementGenerator = function(i) {
   pizzaImageContainer.appendChild(pizzaImage);
   pizzaContainer.appendChild(pizzaImageContainer);
 
-
   pizzaDescriptionContainer.style.width="65%";
 
   pizzaName = document.createElement("h4");
@@ -446,13 +443,24 @@ var resizePizzas = function(size) {
 
     return dx;
   }
+//optimized for loop
+  var lengthHolderOne = document.getElementsByClassName('randomPizzaContainer');
+  var lengthHolderTwo = document.getElementsByClassName("randomPizzaContainer").length;
 
+  function layout(size){
+    for(var i = 0; i < lengthHolderTwo; i++){
+      var dx = determineDx((lengthHolderOne)[i], size);
+      var newwidth = (lengthHolderOne[i].offsetWidth + dx) + 'px';
+
+      return newwidth;
+    }
+  }
+
+  var newwidth = layout(size);
   // Iterates through pizza elements on the page and changes their widths
   function changePizzaSizes(size) {
-    for (var i = 0; i < document.querySelectorAll(".randomPizzaContainer").length; i++) {
-      var dx = determineDx(document.querySelectorAll(".randomPizzaContainer")[i], size);
-      var newwidth = (document.querySelectorAll(".randomPizzaContainer")[i].offsetWidth + dx) + 'px';
-      document.querySelectorAll(".randomPizzaContainer")[i].style.width = newwidth;
+    for (var i = 0; i < lengthHolderTwo; i++) {
+      lengthHolderOne[i].style.width = newwidth;
     }
   }
 
@@ -501,30 +509,45 @@ function updatePositions() {
   frame++;
   window.performance.mark("mark_start_frame");
 
-  var items = document.querySelectorAll('.mover');
-  for (var i = 0; i < items.length; i++) {
-    var phase = Math.sin((document.body.scrollTop / 1250) + (i % 5));
-    items[i].style.left = items[i].basicLeft + 100 * phase + 'px';
+  //an array for pizza moving horizontally
+  var pizzaHolder = new Array();
+
+  //for loop to prevent constant recalculation
+  var lengthHolder = items.length;
+  var phaseHolder = document.body.scrollTop / 1250;
+
+  for (var i = 0; i < lengthHolder; i++) {
+    var phase = Math.sin((phaseHolder) + (i % 5));
+    pizzaHolder.push(phase);
+  }
+  for (var i = 0; i <lengthHolder; i++) {
+    items[i].style.left = items[i].basicLeft + 100 * pizzaHolder[i] + 'px';
   }
 
   // User Timing API to the rescue again. Seriously, it's worth learning.
   // Super easy to create custom metrics.
   window.performance.mark("mark_end_frame");
   window.performance.measure("measure_frame_duration", "mark_start_frame", "mark_end_frame");
+
   if (frame % 10 === 0) {
     var timesToUpdatePosition = window.performance.getEntriesByName("measure_frame_duration");
     logAverageFrame(timesToUpdatePosition);
   }
 }
 
-// runs updatePositions on scroll
-window.addEventListener('scroll', updatePositions);
+// RequestAnimationFrame, sruns updatePositions on scroll
+window.addEventListener('scroll', function() {
+    window.requestAnimationFrame(updatePositions);
+});
 
+
+var items;
 // Generates the sliding pizzas when the page loads.
 document.addEventListener('DOMContentLoaded', function() {
+
   var cols = 8;
   var s = 256;
-  for (var i = 0; i < 200; i++) {
+  for (var i = 0; i < 35; i++) {
     var elem = document.createElement('img');
     elem.className = 'mover';
     elem.src = "images/pizza.png";
@@ -534,5 +557,7 @@ document.addEventListener('DOMContentLoaded', function() {
     elem.style.top = (Math.floor(i / cols) * s) + 'px';
     document.querySelector("#movingPizzas1").appendChild(elem);
   }
+  //Don't need to call DOM since Mover are saved in an array.
+  items = document.getElementsByClassName('mover');
   updatePositions();
 });

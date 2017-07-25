@@ -29,10 +29,14 @@ form {
   font-weight: 800;
 }
 
+/* ADDED WILL-CHANGE for better performance*/
 .mover {
   position: fixed;
   width: 256px;
   z-index: -1;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .randomPizzaContainer {
