@@ -510,7 +510,7 @@ function updatePositions() {
   window.performance.mark("mark_start_frame");
 
   //an array for pizza moving horizontally
-  var pizzaHolder = new Array();
+  var pizzaHolder = [];
 
   //for loop to prevent constant recalculation
   var lengthHolder = items.length;
@@ -520,9 +520,11 @@ function updatePositions() {
     var phase = Math.sin((phaseHolder) + (i % 5));
     pizzaHolder.push(phase);
   }
-  for (var i = 0; i <lengthHolder; i++) {
-    items[i].style.left = items[i].basicLeft + 100 * pizzaHolder[i] + 'px';
+  for (var x = 0; x <lengthHolder; x++) {
+    items[x].style.left = items[x].basicLeft + 100 * pizzaHolder[x] + 'px';
   }
+
+
 
   // User Timing API to the rescue again. Seriously, it's worth learning.
   // Super easy to create custom metrics.
